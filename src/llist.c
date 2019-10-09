@@ -7,9 +7,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "llist.h"
 
-struct Element 
+struct ElementType 
 {
     char StateCode[5] ;
     char StateName[50] ;
@@ -17,7 +18,7 @@ struct Element
 
 struct ListNode 
 {
-    struct Element S ;
+    struct ElementType S ;
     NextState Next ;
 } ;
 
@@ -29,6 +30,14 @@ int IsEmpty(StateList L)
 /* Main routine to test our functions */
 int main(void)
 {
+    State MyState ;
+    MyState = malloc(sizeof(struct ElementType)) ;
+    strncpy(MyState->StateCode,"GA",5) ;
+    strncpy(MyState->StateName,"GEORGIA",10) ;
+
+    printf("My state information: \n\tState = %s\n\tCode  = %s\n\n", 
+        MyState->StateName, MyState->StateCode) ;
+
     StateList States ;
     States = malloc(sizeof(struct ListNode)) ;
     States->Next = NULL ;
