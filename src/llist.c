@@ -66,6 +66,12 @@ int main(void)
     if(IsEmpty(States)) {
         printf("Our new list is empty, adding our first node...\n") ;
         Insert(MyState, States, States) ;
+
+        State MyNextState ;
+        MyNextState = malloc(sizeof(struct ElementType)) ;
+        strncpy(MyNextState->StateCode,"NC",5) ;
+        strncpy(MyNextState->StateName,"NORTH CAROLINA",17) ;
+        Insert(MyNextState, States, States->Next) ;
     } else {
         printf("Our list is not empty!\n") ;
     }
@@ -73,19 +79,22 @@ int main(void)
     if(IsEmpty(States)) {
         printf("We have a problem! Just added a node, but list still tests as empty!\n") ;
     } else {
+        /* Use header ptr to next node (first node) and print it's contents, then advance current */
         NextState Current ;
         Current = States->Next ;
         printf("Current state:      %s\n", Current->StateData->StateName) ;
         printf("Current state code: %s\n", Current->StateData->StateCode) ;
+        Current = Current->Next ;
 
-        /* The below is causing a segmentation fault */
-        /*
-        while(! (IsLast(Current->Next, States))) {
+        /* Enumerate down the list until hit the last node, handle that special */
+        while(! (IsLast(Current, States))) {
             printf("Current state:      %s\n", Current->StateData->StateName) ;
             printf("Current state code: %s\n", Current->StateData->StateCode) ;
             Current = Current->Next ;
         }
-        */
+        /* We are on last node, so print it but do not advance Current to next node */
+        printf("Current state:      %s\n", Current->StateData->StateName) ;
+        printf("Current state code: %s\n", Current->StateData->StateCode) ;
     }
 
     return 0 ;
