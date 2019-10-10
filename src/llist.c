@@ -50,10 +50,46 @@ NextState Find(State st, StateList L)
     NextState Loc ;
 
     Loc = L->Next ;
-    while(Loc != NULL && strncmp(Loc->StateData->StateName, st->StateName, sizeof(st->StateName)))
+    while(Loc != NULL && strncmp(Loc->StateData->StateName, st->StateName, 
+            sizeof(st->StateName)))
         Loc = Loc->Next ;
 
     return Loc ;
+}
+
+/******************************************************************************
+ * FindPrevious() - returns the location of the previous node of a given      *
+ *                  given element in the list. If element is not found, the   *
+ *                  returned node must have NEXT field == NULL.               *
+ *****************************************************************************/
+NextState FindPrevious(State st, StateList L)
+{
+    NextState PrevLoc ;
+
+    PrevLoc = L ;
+    while(PrevLoc->Next != NULL && strncmp(PrevLoc->Next->StateData->StateName,
+            st->StateName, sizeof(st->StateName)))
+        PrevLoc = PrevLoc->Next ;
+
+    return PrevLoc ;
+}
+
+/******************************************************************************
+ * Delete() - accepts pointer to element and pointer to list and removes      *
+ *            first occurance of element found from list (and frees memory)   *
+ *****************************************************************************/
+void Delete(State st, StateList L)
+{
+    NextState Loc, tmpNode ;
+
+    Loc = FindPrevious(st, L) ;
+
+    if(!IsLast(Loc, L))
+    {
+        tmpNode = Loc->Next ;
+        Loc->Next = tmpNode->Next ;
+        free(tmpNode) ;
+    }
 }
 
 /******************************************************************************
@@ -77,6 +113,36 @@ void Insert(State S, StateList L, NextState N)
     N->Next = tmpState ;
 }
 
+/******************************************************************************
+ * WalkList() - Routine used to iterate over list and print out contents      *
+ *****************************************************************************/
+void WalkList(StateList L)
+{
+    NextState Current ;
+
+    if(IsEmpty(L)) {
+        printf("We have a problem! Just inserted nodes, but list still tests as empty!\n") ;
+        exit(EXIT_FAILURE) ;
+    } else {
+        /* Use header ptr to next node (first node) and print it's contents, then advance current */
+        printf("Address of beginning of list: %p\n", L) ;
+        Current = L->Next ;
+
+        /* Enumerate down the list until hit the last node, handle that special */
+        while(! (IsLast(Current, L))) {
+            printf("Address of next node:         %p\n", Current) ;
+            printf("Current state:      %s\n", Current->StateData->StateName) ;
+            printf("Current state code: %s\n", Current->StateData->StateCode) ;
+            Current = Current->Next ;
+        }
+
+        /* We are on last node, so print it but do not advance Current to next node */
+        printf("Address of last node:         %p\n", Current) ;
+        printf("Current state:      %s\n", Current->StateData->StateName) ;
+        printf("Current state code: %s\n\n", Current->StateData->StateCode) ;
+    }
+}
+
 /**************************************
  * Main routine to test our functions * 
  *************************************/
@@ -94,9 +160,14 @@ int main(void)
     States = malloc(sizeof(struct ListNode)) ;
     States->Next = NULL ;
 
+    /* For testing - change the two strncpy() calls to what you like */
     MySearchState = malloc(sizeof(struct ElementType)) ;
     strncpy(MySearchState->StateCode,"VA",5) ;
-    strncpy(MySearchState->StateName,"Virginia",11) ;
+    strncpy(MySearchState->StateName,"VIRGINIA",11) ;
+    /*
+    strncpy(MySearchState->StateCode,"SC",5) ;
+    strncpy(MySearchState->StateName,"SOUTH CAROLINA",17) ;
+    */
 
     if(IsEmpty(States)) {
         printf("Our new list is empty, adding our first node...\n") ;
@@ -123,41 +194,31 @@ int main(void)
         printf("Our list is not empty!\n") ;
     }
 
-    if(IsEmpty(States)) {
-        printf("We have a problem! Just added a node, but list still tests as empty!\n") ;
-    } else {
-        /* Use header ptr to next node (first node) and print it's contents, then advance current */
-        printf("Address of beginning of list: %p\n", States) ;
-        NextState Current ;
-        Current = States->Next ;
-        printf("Address of first node:        %p\n", Current) ;
-        printf("Current state:      %s\n", Current->StateData->StateName) ;
-        printf("Current state code: %s\n", Current->StateData->StateCode) ;
-        Current = Current->Next ;
-
-        /* Enumerate down the list until hit the last node, handle that special */
-        while(! (IsLast(Current, States))) {
-            printf("Address of next node:         %p\n", Current) ;
-            printf("Current state:      %s\n", Current->StateData->StateName) ;
-            printf("Current state code: %s\n", Current->StateData->StateCode) ;
-            Current = Current->Next ;
-        }
-        /* We are on last node, so print it but do not advance Current to next node */
-        printf("Address of last node:         %p\n", Current) ;
-        printf("Current state:      %s\n", Current->StateData->StateName) ;
-        printf("Current state code: %s\n", Current->StateData->StateCode) ;
-    }
+    WalkList(States) ;
 
     State findMe = MySearchState ;
-    NextState foundNode = Find(findMe, States) ;
-    if(foundNode != NULL)
+    NextState foundNodeLoc = Find(findMe, States) ;
+    NextState prevNodeLoc = FindPrevious(findMe, States) ;
+    if(foundNodeLoc != NULL)
     {
-        printf("Found the state you searched for at location: %p\n", foundNode) ;
-        printf("State name = %s\tState Code = %s\n", foundNode->StateData->StateName, 
-            foundNode->StateData->StateCode) ;
+        printf("Found the state you searched for at location: %p\n", foundNodeLoc) ;
+        printf("State name = %s\tState Code = %s\n\n", foundNodeLoc->StateData->StateName, 
+            foundNodeLoc->StateData->StateCode) ;
     } else {
-        printf("State not found in list.\n") ;
+        printf("State not found in list.\n\n") ;
     }
 
+    printf("Previous state location is: %p\n", prevNodeLoc) ;
+    if(prevNodeLoc->Next != NULL)
+        printf("Previous State Name = %s\tPrevious State Code = %s\n\n", 
+            prevNodeLoc->StateData->StateName, prevNodeLoc->StateData->StateCode) ;
+    else
+        printf("State not found in list, previous state location set to end of list: %p\n\n",
+            prevNodeLoc) ;
+      
+    State StateToDelete = MyThirdState ;
+    Delete(StateToDelete, States) ;
+    WalkList(States) ;
+   
     return 0 ;
 }
