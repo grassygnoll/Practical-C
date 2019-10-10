@@ -93,6 +93,23 @@ void Delete(State st, StateList L)
 }
 
 /******************************************************************************
+ * DeleteList() - accepts pointer to list and walks list purging each node    * 
+ *****************************************************************************/
+void DeleteList(StateList L)
+{
+    NextState CurrLoc, tmpPtr ;
+
+    CurrLoc = L->Next ;
+    L->Next = NULL ;
+    while(CurrLoc != NULL)
+    {
+        tmpPtr = CurrLoc->Next ;
+        free(CurrLoc) ;
+        CurrLoc = tmpPtr ;
+    }
+}
+
+/******************************************************************************
  * Insert() - accepts pointer to element, pointer to list (optional), and     *
  *            pointer to next node and inserts element as new node in given   *
  *            location                                                        *
@@ -120,26 +137,27 @@ void WalkList(StateList L)
 {
     NextState Current ;
 
+    printf("Walking linked list of data...\n") ;
+    printf("\tAddress of beginning of list: %p\n", L) ;
+
     if(IsEmpty(L)) {
-        printf("We have a problem! Just inserted nodes, but list still tests as empty!\n") ;
-        exit(EXIT_FAILURE) ;
+        printf("\tNothing to walk, our list is empty.\n\n") ;
     } else {
         /* Use header ptr to next node (first node) and print it's contents, then advance current */
-        printf("Address of beginning of list: %p\n", L) ;
         Current = L->Next ;
 
         /* Enumerate down the list until hit the last node, handle that special */
         while(! (IsLast(Current, L))) {
-            printf("Address of next node:         %p\n", Current) ;
-            printf("Current state:      %s\n", Current->StateData->StateName) ;
-            printf("Current state code: %s\n", Current->StateData->StateCode) ;
+            printf("\tAddress of next node:         %p\n", Current) ;
+            printf("\tCurrent state:      %s\n", Current->StateData->StateName) ;
+            printf("\tCurrent state code: %s\n", Current->StateData->StateCode) ;
             Current = Current->Next ;
         }
 
         /* We are on last node, so print it but do not advance Current to next node */
-        printf("Address of last node:         %p\n", Current) ;
-        printf("Current state:      %s\n", Current->StateData->StateName) ;
-        printf("Current state code: %s\n\n", Current->StateData->StateCode) ;
+        printf("\tAddress of last node:         %p\n", Current) ;
+        printf("\tCurrent state:      %s\n", Current->StateData->StateName) ;
+        printf("\tCurrent state code: %s\n\n", Current->StateData->StateCode) ;
     }
 }
 
@@ -217,7 +235,13 @@ int main(void)
             prevNodeLoc) ;
       
     State StateToDelete = MyThirdState ;
+    printf("Deleting state where State Name = %s and State Code = %s\n", 
+        StateToDelete->StateName, StateToDelete->StateCode) ;
     Delete(StateToDelete, States) ;
+    WalkList(States) ;
+
+    printf("Deleting entire list of states...\n") ;
+    DeleteList(States) ;
     WalkList(States) ;
    
     return 0 ;

@@ -24,7 +24,7 @@ StateList MakeEmpty(StateList L) ;
 int IsEmpty(StateList L) ;
 int IsLast(NextState N, StateList L) ;
 NextState Find(State S, StateList L) ;
-NextState FindPrev(State S, StateList L) ;
+NextState FindPrevious(State S, StateList L) ;
 void Delete(State S, StateList L) ;
 void Insert(State S, StateList L, NextState N) ;
 void DeleteList(StateList L) ;
