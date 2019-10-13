@@ -131,11 +131,58 @@ void Insert(State S, StateList L, NextState N)
 }
 
 /******************************************************************************
+ * Header() - accepts a pointer to a list and returns that pointer as the     *
+ *            header location (NOTE: I think this is the wrong implementation)*
+ *****************************************************************************/
+NextState Header(StateList L)
+{
+    return L ;
+}
+
+/******************************************************************************
+ * First() - accepts pointer to list and if list is not empty, returns        *
+ *           pointer to first node in list.                                   *
+ *****************************************************************************/
+NextState First(StateList L)
+{
+    if(!IsEmpty(L)) 
+        return L->Next ;
+    else
+        return NULL ;
+}
+
+/******************************************************************************
+ * Advance() - serves as a list iterator, accepting pointer to node within    *
+ *             list and returning pointer to next node in the list.           *
+ *****************************************************************************/
+NextState Advance(NextState N)
+{
+    /* Because IsLast() is written to accept a List pointer as well, passing */
+    /* NULL as second argument since this function is not passed list        */
+    if(!IsLast(N, NULL))
+        return N->Next ;
+    else
+        return NULL ;
+}
+
+/******************************************************************************
+ * Retrieve() - Accepts a location in the list and retrieves the node content *
+ *****************************************************************************/
+State Retrieve(NextState N)
+{
+    if(N != NULL) 
+        return N->StateData ;
+    else
+        return NULL ;
+}
+
+/******************************************************************************
  * WalkList() - Routine used to iterate over list and print out contents      *
  *****************************************************************************/
 void WalkList(StateList L)
 {
     NextState Current ;
+    int nodeCnt = 0 ;
 
     printf("Walking linked list of data...\n") ;
     printf("\tAddress of beginning of list: %p\n", L) ;
@@ -159,6 +206,20 @@ void WalkList(StateList L)
         printf("\tCurrent state:      %s\n", Current->StateData->StateName) ;
         printf("\tCurrent state code: %s\n\n", Current->StateData->StateCode) ;
     }
+
+    /* Added in to test the Header(), First() and Advance() functions */
+    printf("\tHeader of the list is located at address: %p\n", Header(L)) ;
+    if(IsEmpty(L)) {
+        printf("\tNothing to advance(), our list is empty.\n\n") ;
+    } else {
+        Current = First(L) ;
+        do
+        {
+            printf("\tAddress of node[%03d] is: %p\n", nodeCnt, Current) ;
+            nodeCnt++ ;
+            Current = Advance(Current) ;
+        } while( Current != NULL ) ;
+    }
 }
 
 /**************************************
@@ -180,12 +241,12 @@ int main(void)
 
     /* For testing - change the two strncpy() calls to what you like */
     MySearchState = malloc(sizeof(struct ElementType)) ;
+    /*
     strncpy(MySearchState->StateCode,"VA",5) ;
     strncpy(MySearchState->StateName,"VIRGINIA",11) ;
-    /*
+    */
     strncpy(MySearchState->StateCode,"SC",5) ;
     strncpy(MySearchState->StateName,"SOUTH CAROLINA",17) ;
-    */
 
     if(IsEmpty(States)) {
         printf("Our new list is empty, adding our first node...\n") ;
@@ -228,8 +289,11 @@ int main(void)
 
     printf("Previous state location is: %p\n", prevNodeLoc) ;
     if(prevNodeLoc->Next != NULL)
+    {
+        State PrevState = Retrieve(prevNodeLoc) ;
         printf("Previous State Name = %s\tPrevious State Code = %s\n\n", 
-            prevNodeLoc->StateData->StateName, prevNodeLoc->StateData->StateCode) ;
+            PrevState->StateName, PrevState->StateCode) ;
+    }
     else
         printf("State not found in list, previous state location set to end of list: %p\n\n",
             prevNodeLoc) ;
@@ -239,6 +303,10 @@ int main(void)
         StateToDelete->StateName, StateToDelete->StateCode) ;
     Delete(StateToDelete, States) ;
     WalkList(States) ;
+
+    NextState RetrieveMe = Find(StateToDelete, States) ;
+    State OldState = Retrieve(RetrieveMe) ;
+    printf("Attempted to retrieve a state node that I previously deleted!\n\n") ;
 
     printf("Deleting entire list of states...\n") ;
     DeleteList(States) ;
