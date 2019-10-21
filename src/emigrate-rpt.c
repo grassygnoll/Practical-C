@@ -68,7 +68,9 @@ void GetStateCode(char *StateOfInterest, FILE* F)
         recs++ ;
         if(strncmp(STATE_OF_EXIT, StateName, strlen(StateName)) == 0)
         { 
-            strncpy(StateOfInterest, DestStateCd, strlen(DestStateCd)) ;
+            /* Had to add in "+1" here on newer Dell laptop to get strncpy() to work properly */
+            /* Did not have this issue on older Lenovo laptop, not sure why it is needed */
+            strncpy(StateOfInterest, DestStateCd, strlen(DestStateCd)+1) ;
             if(DEBUG)
                 printf("Total Records Read until State of Interest Found = %04d\n", recs) ;
 
