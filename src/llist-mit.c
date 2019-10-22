@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define MAX_VAL   10
+
 typedef struct node
 {
     int data ;
@@ -69,30 +71,60 @@ void display(nodeptr head)
     {
         while(head->next != NULL)
         {
-            printf("List node [%d]: %d\n", i, head->data) ;
+            printf("List node [%d]: %d\tAddress: %p\n", i, head->data, head) ;
             i++ ;
             head = head->next ;
         }
-        printf("List node [%d]: %d\n\n", i, head->data) ;
+        printf("List node [%d]: %d\tAddress: %p\n\n", i, head->data, head) ;
     }
+}
+
+/* Finds node where data = value, returns pointer to node or NULL if not found */
+nodeptr find(nodeptr head, int value)
+{
+    nodeptr tmpptr = head ;
+
+    while((tmpptr->next != NULL) && (tmpptr->data != value))
+    {
+        tmpptr = tmpptr->next ;
+    }
+
+    if(tmpptr->data == value)
+        return tmpptr ;
+    else 
+        return NULL ;
 }
 
 /* Main code execution */
 int main(void)
 {
+    int numbers[MAX_VAL] = {5,10,33,2,55,78,19,76,99,2} ;
+    int i = 0 ;
     nodeptr listHead = NULL ;
+    nodeptr found = NULL ;
 
     display(listHead) ;
-    listHead = add_front(listHead, 55) ;
+    listHead = add_front(listHead, numbers[4]) ;
     display(listHead) ;
-    listHead = add_front(listHead, 10) ;
+    listHead = add_front(listHead, numbers[1]) ;
     display(listHead) ;
-    listHead = add_front(listHead, 5) ;
+    listHead = add_front(listHead, numbers[0]) ;
     display(listHead) ;
-    listHead = add_front(listHead, 76) ;
+    listHead = add_front(listHead, numbers[7]) ;
     display(listHead) ;
-    listHead = add_back(listHead, 19) ;
+    listHead = add_back(listHead, numbers[6]) ;
     display(listHead) ;
+
+    for(i = 0; i < MAX_VAL; i++)
+    {
+        if((found = find(listHead, numbers[i])) != NULL)
+        {
+            printf("Found %d at address = %p\n", numbers[i], found) ;
+            printf("Value = %d\n", found->data) ;
+        }
+        else
+            printf("find() returned NULL for value = %d\n", numbers[i]) ;
+    }
 
     return 0 ;
 }
