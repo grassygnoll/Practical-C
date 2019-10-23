@@ -58,6 +58,8 @@ leafptr add_leaf(leafptr root, int val)
         root->left = add_leaf(root->left, val) ;
     else
         root->right = add_leaf(root->right, val) ;
+
+    return root ;
 }
 
 /*******************************************************************************
@@ -103,10 +105,8 @@ int deltree(leafptr root)
     {
         /* delete left leaf if present */
         count += deltree(root->left) ;
-        root->left = NULL ;
         /* delete right leaf if present */
         count += deltree(root->right) ;
-        root->right = NULL ;
         /* now delete this leaf */
         free(root) ;
         count += 1 ;
@@ -135,10 +135,8 @@ int main(void)
 
     printf("\nAttempting to delete entire tree...\n") ;
     leaves = deltree(trunk) ;
+    printf("\nExpect %d leaves deleted.\n", MAX_INTS) ;
     printf("Deleted %d leaves.\n\n", leaves) ;
-
-    printf("Checking tree post-delete of all leaves...\n") ;
-    inorder(trunk) ;
 
     return 0 ;
 }
