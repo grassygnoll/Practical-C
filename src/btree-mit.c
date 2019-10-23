@@ -61,6 +61,21 @@ leafptr add_leaf(leafptr root, int val)
 }
 
 /*******************************************************************************
+ * preorder() - accepts ptr to root of tree and displays the leaves using      *
+ *              pre-order traversal (root first, then left side, then right).  *
+ ******************************************************************************/
+void preorder(leafptr root)
+{
+    if(root != NULL)
+    {
+        printf("[%p] data=%d\tleft->%p\tright->%p\n", root, root->data, 
+            root->left, root->right) ;
+        preorder(root->left) ;
+        preorder(root->right) ;
+    }
+}
+
+/*******************************************************************************
  * main() - Main program entry point with test driving code                    *
  ******************************************************************************/
 int main(void)
@@ -71,6 +86,8 @@ int main(void)
 
     for(i = 0; i < MAX_INTS; i++)
         trunk = add_leaf(trunk, Numbers[i]) ;
+
+    preorder(trunk) ;
 
     return 0 ;
 }
