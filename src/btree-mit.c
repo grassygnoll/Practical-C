@@ -101,10 +101,18 @@ int deltree(leafptr root)
 
     if(root != NULL)
     {
+        /* delete left leaf if present */
         count += deltree(root->left) ;
+        root->left = NULL ;
+        /* delete right leaf if present */
         count += deltree(root->right) ;
-        /* don't think this works yet, need to also add in the leaf delete/free logic */
+        root->right = NULL ;
+        /* now delete this leaf */
+        free(root) ;
+        count += 1 ;
     }
+
+    return count ;
 }
 
 /*******************************************************************************
@@ -113,7 +121,7 @@ int deltree(leafptr root)
 int main(void)
 {
     int Numbers[MAX_INTS] = {3,1,0,2,8,6,5,9,4,7} ;
-    int i = 0 ;
+    int i = 0, leaves = 0 ;
     leafptr trunk = NULL ;
 
     for(i = 0; i < MAX_INTS; i++)
@@ -123,6 +131,13 @@ int main(void)
     preorder(trunk) ;
 
     printf("\nBinary tree contents in \"inorder\" display:\n") ;
+    inorder(trunk) ;
+
+    printf("\nAttempting to delete entire tree...\n") ;
+    leaves = deltree(trunk) ;
+    printf("Deleted %d leaves.\n\n", leaves) ;
+
+    printf("Checking tree post-delete of all leaves...\n") ;
     inorder(trunk) ;
 
     return 0 ;
