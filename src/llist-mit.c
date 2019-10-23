@@ -95,6 +95,28 @@ nodeptr find(nodeptr head, int value)
         return NULL ;
 }
 
+/* Deletes specified node, found by find(); assumes delnode not NULL */
+nodeptr delete(nodeptr head, nodeptr delnode)
+{
+    nodeptr tmpptr = NULL ;
+
+    if(head == delnode)
+    {
+        head = head->next ;
+    }
+    else
+    {
+        tmpptr = head ;
+        while(tmpptr->next != delnode)
+            tmpptr = tmpptr->next ;
+
+        tmpptr->next = delnode->next ;
+    }
+    free(delnode) ;
+
+    return head ;
+}
+
 /* Main code execution */
 int main(void)
 {
@@ -125,6 +147,26 @@ int main(void)
         else
             printf("find() returned NULL for value = %d\n", numbers[i]) ;
     }
+
+    if((found = find(listHead, numbers[6])) != NULL)
+        listHead = delete(listHead, found) ;
+
+    display(listHead) ;
+
+    if((found = find(listHead, numbers[7])) != NULL)
+        listHead = delete(listHead, found) ;
+
+    display(listHead) ;
+
+    if((found = find(listHead, numbers[8])) != NULL)
+        listHead = delete(listHead, found) ;
+
+    display(listHead) ;
+
+    if((found = find(listHead, numbers[1])) != NULL)
+        listHead = delete(listHead, found) ;
+
+    display(listHead) ;
 
     return 0 ;
 }
