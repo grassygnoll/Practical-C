@@ -117,6 +117,20 @@ nodeptr delete(nodeptr head, nodeptr delnode)
     return head ;
 }
 
+/* Deletes entire list - assumes head != NULL */
+void freelist(nodeptr head)
+{
+    nodeptr tmpptr = NULL ;
+
+    while(head->next != NULL)
+    {
+        tmpptr = head ;
+        head = head->next ;
+        free(tmpptr) ;
+    }
+    free(head) ;
+}
+
 /* Main code execution */
 int main(void)
 {
@@ -149,24 +163,52 @@ int main(void)
     }
 
     if((found = find(listHead, numbers[6])) != NULL)
-        listHead = delete(listHead, found) ;
-
-    display(listHead) ;
+    {
+        printf("\nFound [%d], removing from list...\n", found->data) ;
+        listHead = delete(listHead, found) ; 
+        display(listHead) ;
+    }
+    else
+    {
+        printf("\n[%d] not found in list, no action to take.\n", numbers[6]) ;
+    }
+    
 
     if((found = find(listHead, numbers[7])) != NULL)
-        listHead = delete(listHead, found) ;
-
-    display(listHead) ;
+    {
+        printf("Found [%d], removing from list...\n", found->data) ;
+        listHead = delete(listHead, found) ; 
+        display(listHead) ;
+    }
+    else
+    {
+        printf("[%d] not found in list, no action to take.\n", numbers[7]) ;
+    }
 
     if((found = find(listHead, numbers[8])) != NULL)
-        listHead = delete(listHead, found) ;
-
-    display(listHead) ;
+    {
+        printf("Found [%d], removing from list...\n", found->data) ;
+        listHead = delete(listHead, found) ; 
+        display(listHead) ;
+    }
+    else
+    {
+        printf("[%d] not found in list, no action to take.\n", numbers[8]) ;
+    }
 
     if((found = find(listHead, numbers[1])) != NULL)
-        listHead = delete(listHead, found) ;
+    {
+        printf("Found [%d], removing from list...\n", found->data) ;
+        listHead = delete(listHead, found) ; 
+        display(listHead) ;
+    }
+    else
+    {
+        printf("[%d] not found in list, no action to take.\n", numbers[1]) ;
+    }
 
-    display(listHead) ;
+    printf("Freeing entire list...\n") ;
+    freelist(listHead) ;
 
     return 0 ;
 }
